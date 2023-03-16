@@ -1,0 +1,415 @@
+{
+	// Place your global snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and 
+	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope 
+	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is 
+	// used to trigger the snippet and the body will be expanded and inserted. Possible variables are: 
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. 
+	// Placeholders with the same ids are connected.
+	"ObjectAPIName": {
+		"scope": "apex",
+		"prefix": "ObjectApiName",
+		"body": [
+			" String objectAPIName = '';",
+			"string keyPrefix = recordId.substring(0,3);",
+			"for( Schema.SObjectType obj : Schema.getGlobalDescribe().Values() ){",
+			"String prefix = obj.getDescribe().getKeyPrefix();",
+			"if(prefix == keyPrefix){",
+			"objectAPIName = obj.getDescribe().getName();",
+			"break;",
+			"}",
+			"}"
+		],
+		"description": "get ObjectApiName via record ID"
+	},
+	"QueryMetadata": {
+		"scope": "apex",
+		"prefix": "custom query",
+		"body": [
+			" List<sObject> lstdata = sObject.getAll().values();"
+		],
+		"description": "Query metadata by custom setting"
+	},
+	"GeoLocation with map pointer": {
+		"scope": "javascript",
+		"prefix": "geolocation",
+		"body": [
+			" if(navigator.geolocation){",
+			"            navigator.geolocation.getCurrentPosition(position=>{",
+			"            this.latitudedata=position.coords.latitude;",
+			"            this.longitudedata=position.coords.longitude;",
+			"//Pointer for MAP",
+			"            this.geoPointer = [{",
+			"                location : {",
+			"                Latitude: this.latitudedata,",
+			"                Longitude : this.longitudedata",
+			"                },",
+			"                }];",
+			"            });",
+			"            ",
+			"        }"
+		],
+		"description": "GeoLocation with map pointer"
+	},
+	"connectedCallback": {
+		"scope": "javascript",
+		"prefix": "connectedCallback on time interval",
+		"body": [
+			"connectedCallback() {",
+			"    setTimeout(() => {",
+			"//Code here ",
+			"    }, 1000);",
+			"}"
+		],
+		"description": "connectedCallback"
+	},
+	"Map": {
+		"scope": "html",
+		"prefix": "map with location pointer",
+		"body": [
+			"<lightning-map map-markers={geoPointer} zoom-level={zoomlevel} >",
+			"</lightning-map>"
+		],
+		"description": "Map"
+	},
+	"Upload file": {
+		"scope": "apex",
+		"prefix": "Upload file in salesforce cloud",
+		"body": [
+			" //Upload attachment file.",
+			"          if(email.binaryAttachments != null && email.binaryAttachments.size() > 0){",
+			"          list<ContentVersion> contentVersions = new List<ContentVersion>();",
+			"              system.debug(email.binaryAttachments.size());",
+			"    for (integer i = 0; i < email.binaryAttachments.size(); i++) {",
+			"        ContentVersion contentVersion = createContentVersion(email.binaryAttachments[i].Filename, email.binaryAttachments[i].Body);",
+			"        contentVersions.add(contentVersion);",
+			"    }",
+			"    insert contentVersions;",
+			"          }",
+			"    List<ContentDocumentLink> contentDocumentLinks = new List<ContentDocumentLink>();",
+			"    contentVersions = [SELECT Id, ContentDocumentId FROM ContentVersion];",
+			"    for(ContentVersion contentVersion : contentVersions){",
+			"        contentDocumentLink cdlink = createContentDocumentLink(ContentVersion.ContentDocumentId, obj.Id);",
+			"        contentDocumentLinks.add(cdlink);",
+			"    }",
+			"          insert contentDocumentLinks;",
+			"          //return type",
+			"  } ",
+			"    //to create a contentversion record:",
+			"     private ContentVersion createContentVersion(String name, blob body){",
+			"    ContentVersion cv = new ContentVersion();",
+			"    cv.ContentLocation = 'S'; // S = Stored in Salesforce",
+			"    cv.PathOnClient = name;",
+			"    cv.Title = name;",
+			"    cv.VersionData = body;",
+			"    return cv;",
+			"}",
+			"    //to create a ContentDocumentLink record:",
+			"    private ContentDocumentLink createContentDocumentLink(Id contentDocumentId, Id parentId){",
+			"        system.debug(parentId);",
+			"        system.debug(contentDocumentId);",
+			"    ContentDocumentLink contentDocumentLink = new ContentDocumentLink();",
+			"    contentDocumentLink.ContentDocumentId = contentDocumentId;",
+			"    contentDocumentLink.LinkedEntityId = parentId;",
+			"    contentDocumentLink.ShareType = 'I'; // Inferred permission",
+			"    contentDocumentLink.Visibility = 'AllUsers';",
+			"    return contentDocumentLink;",
+			"} ",
+			""
+		],
+		"description": "Upload file"
+	},
+	"test class": {
+		"scope": "apex",
+		"prefix": "test class for apex",
+		"body": [
+			" @testSetup",
+			"    public static void setup(){",
+			"//dummy data for required object or call testUtilityClass",
+			"    }",
+			"    @istest",
+			"    public static void test(){",
+			"        test.startTest();",
+			"//Write Soql query to get value from testSetup",
+			"// For static class ",
+			"ClassName.methodName('pass required parameter');",
+			"// For Batch class",
+			"      /*  className objectName= new ClassName();",
+			"        Id batchId= Database.executeBatch(ObjectName); */",
+			"        test.stopTest();",
+			"// Validate the job.",
+			"    System.assertEquals(expected, actual, msg);",
+			"    }"
+		],
+		"description": "test class"
+	},
+	"for each": {
+		"scope": "html",
+		"prefix": "For:each",
+		"body": [
+			"<template for:each={object} for:item=\"obj\">"
+		],
+		"description": "To render a list of items in html"
+	},
+	"Picklist value of a field": {
+		"scope": "apex",
+		"prefix": "Picklist",
+		"body": [
+			"public static String getPickListValue(string objectApiName, string fieldApiName){",
+			"            MainWrapper mainWrap=new MainWrapper();",
+			"            mainWrap.jiraPicklist=new list<DropDownWrapper>();",
+			"            Schema.SObjectType convertToObj = Schema.getGlobalDescribe().get(objectApiName);",
+			"         Schema.DescribeSObjectResult res = convertToObj.getDescribe();",
+			"         Schema.DescribeFieldResult fieldResult = res.fields.getMap().get(fieldApiName).getDescribe();",
+			"        List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();",
+			"        for( Schema.PicklistEntry pickListVal : ple){",
+			"            DropDownWrapper picklstWrap=new DropDownWrapper();",
+			"            picklstWrap.label=pickListVal.label;",
+			"            picklstWrap.value=pickListVal.value;",
+			"            mainWrap.jiraPicklist.add(picklstWrap);",
+			"        }",
+			"        return JSON.serialize(mainWrap);",
+			"        }"
+		],
+		"description": "Picklist value of a field"
+	},
+	"import basic": {
+		"scope": "javascript",
+		"prefix": "import",
+		"body": [
+			"// import standard toast event ",
+			"import {ShowToastEvent} from 'lightning/platformShowToastEvent';",
+			"//close action model and navigation",
+			"import { CloseActionScreenEvent } from 'lightning/actions';",
+			"import { NavigationMixin } from 'lightning/navigation';",
+		],
+		"description": "Basic import class"
+	},
+	"handleErrorResponse": {
+		"scope": "javascript",
+		"prefix": "error handler",
+		"body": [
+			"handleError(error) {",
+			"if (error) {",
+			"                 let errorMg = 'Unknown error';",
+			"                 let errorName= '';",
+			"                 let errorStack='';",
+			"                 if (Array.isArray(error.body)) {",
+			"                     errorMg = error.body.map(e => e.message).join(', ');",
+			"                 }",
+			"                 // UI API DML, Apex and network errors",
+			"                 else if (error.body && typeof error.body.message === 'string') {",
+			"                    errorName = error.body.exceptionType;",
+			"                     errorMg = error.body.message;",
+			"                     errorStack = error.body.stackTrace;",
+			"                 }",
+			"                 // JS errors",
+			"                 else if (typeof error.message === 'string') {",
+			"                     errorName = error.name;",
+			"                     errorMg = error.message;",
+			"                     errorStack= error.stack.split(\"\\n\")[2].split(\":\");",
+			"                 }",
+			"                 console.log('Error Name : '+errorName);",
+			"                 console.log('Error : '+errorMg);",
+			"                 console.log('Error Line :'+errorStack);",
+			"            this.showToast('Error', errorMg, 'error', true);",
+			"             }",
+			" showToast(title, msg, typeOfToast, isSticky) {",
+			" const event = new ShowToastEvent({",
+			"title: title,",
+			"message: msg,",
+			"variant: typeOfToast,",
+			"mode: isSticky ? 'sticky' : 'dismissible'",
+			"});",
+			"",
+			"this.dispatchEvent(event);",
+			"    }"
+		],
+		"description": "handleErrorResponse"
+	},
+	"Loading spinner": {
+		"scope": "html",
+		"prefix": "spinner , loading",
+		"body": [
+			"<template if:true={isLoading}>",
+			"<lightning-spinner alternative-text=\"Loading\" variant=\"brand\" class=\"slds-align--absolute-center\">",
+			"</lightning-spinner>",
+			"</template>"
+		],
+		"description": "Loading spinner"
+	},
+	"showToast": {
+		"scope": "javascript",
+		"prefix": "toast",
+		"body": [
+			"this.showToast('Title', 'Message', 'variant(error, warning, success, info)', true);"
+		],
+		"description": "showToast"
+	},
+	"Wrapper": {
+		"scope": "apex",
+		"prefix": "Wrapper class",
+		"body": [
+			" public class MainWrapper{",
+			"        @AuraEnabled public list<DropdownWrapper> dropDownList;",
+			"        @AuraEnabled public list<FieldWrapper> recordData;",
+			"        @AuraEnabled public Account acc;",
+			"        @AuraEnabled public string urlDomain;",
+			"    }",
+			"    public class DropdownWrapper{",
+			"        @AuraEnabled public string label;",
+			"        @AuraEnabled public string value;",
+			"    }",
+			"    public class FieldWrapper{",
+			"        @AuraEnabled public Id Id;",
+			"        @AuraEnabled public Decimal indexValue;",
+			"        @AuraEnabled public string link;",
+			"    }",
+			"    public class listWrapper{",
+			"        @AuraEnabled public Account acc;",
+			"    }"
+		],
+		"description": "Wrapper"
+	},
+	"classLevelComment": {
+		"scope": "javascript",
+		"prefix": "comment",
+		"body": [
+			"/**",
+			"* This is a class level comment that",
+			"* spans multiple lines",
+			"*/"
+		],
+		"description": "classLevelComment"
+	},
+	"functionLevelComment": {
+		"scope": "javascript",
+		"prefix": "comment",
+		"body": [
+			"/**",
+			"* This is a function level comment that",
+			"* spans multiple lines",
+			"* @param {String} arg1",
+			"* Description of arg1 parameter",
+			"* @param {integer} arg2",
+			"* Description of arg2 parameter",
+			"* @return {boolean} Description of the value that is returned",
+			"*/"
+		],
+		"description": "functionLevelComment"
+	},
+	"PropertyLevelComment": {
+		"scope": "javascript",
+		"prefix": "comment",
+		"body": [
+			"/**",
+			" * Description of the property.",
+			" *",
+			" * @type {String}",
+			" */"
+		],
+		"description": "PropertyLevelComment"
+	},
+	"Aura": {
+		"scope": "apex",
+		"prefix": "Aura",
+		"body": [
+			"@AuraEnabled(cacheable=true)",
+			"@AuraEnabled"
+		],
+		"description": "Aura"
+	},
+	"debug log": {
+		"scope": "apex",
+		"prefix": "log",
+		"body": [
+			"system.debug(loggingLevel.INFO, 'Query : '+ sQuery);",
+			"System.debug(LoggingLevel.ERROR,'getMessage.......'+ex.getMessage());",
+			"System.debug(LoggingLevel.ERROR,'getLineNumber......'+ex.getLineNumber());",
+			"System.debug(LoggingLevel.ERROR,'getCause......'+ex.getCause());"
+		],
+		"description": "debug log"
+	},
+	"Object Sort": {
+		"scope": "javascript",
+		"prefix": "sort",
+		"body": [
+			".sort((a, b) => a.label.localeCompare(b.label));"
+		],
+		"description": "Object Sort"
+	},
+	"SessionStorage": {
+		"scope": "javascript",
+		"prefix": "session",
+		"body": [
+			"// Save data to sessionStorage",
+			"sessionStorage.setItem('key', 'value');",
+			"// Get saved data from sessionStorage",
+			"let data = sessionStorage.getItem('key');",
+			"// Remove saved data from sessionStorage",
+			"sessionStorage.removeItem('key');",
+			"// Remove all saved data from sessionStorage",
+			"sessionStorage.clear();"
+		],
+		"description": "SessionStorage"
+	},
+	"try catch for Js": {
+		"scope": "javascript",
+		"prefix": "try catch",
+		"description": "try catch for Js",
+		"body": [
+			"try{",
+			"}catch(error){",
+			"console.log(error);",
+			"}"
+		]
+	},
+	"CRUD": {
+		"scope": "apex",
+		"prefix": "Security enforce",
+		"body": [
+			"SObjectAccessDecision securityDecision = Security.stripInaccessible(",
+			"        AccessType.UPSERTABLE,",
+			"        priceBook",
+			"      );",
+			"      upsert securityDecision.getRecords();"
+		],
+		"description": "CRUD"
+	},
+	"FieldNames": {
+		"scope": "apex",
+		"prefix": "FieldName",
+		"body": [
+			"Map<String, Schema.SObjectField> fieldMap = ObjectApiName.sObjectType.getDescribe()",
+			"      .fields.getMap();",
+			"    Set<String> setFieldNames = fieldMap.keySet();",
+			"    List<String> lstFieldNames = new List<String>(setFieldNames);"
+		],
+		"description": "FieldNames"
+	},
+	"BatchClass": {
+		"scope": "apex",
+		"prefix": "batch",
+		"body": [
+			"public class BatchClassName implements Database.Batchable<sObject>,schedulable",
+			"{",
+			"    public Database.QueryLocator start(Database.BatchableContext bc)",
+			"    {",
+			"        String query = 'SELECT Id, Name FROM sObject';",
+			"       ",
+			"        return Database.getQueryLocator(query);",
+			"    }",
+			"    public void execute(Database.BatchableContext bc, List<sObject> lstObj)",
+			"    {",
+			"       }",
+			"    public void finish(Database.BatchableContext bc) {",
+			"        System.debug('test');",
+			"    }",
+			"     //Schedules method",
+			"    public void execute(SchedulableContext sc) {",
+			"        Id batchJobId = Database.executeBatch(new BatchClassName(), 200);",
+			"    }",
+			"}"
+		],
+		"description": "BatchClass"
+	}
+}
